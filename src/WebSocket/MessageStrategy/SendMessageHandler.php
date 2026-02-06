@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\WebSocket\Strategy;
+namespace App\WebSocket\MessageStrategy;
 
 use App\Enum\ActionType;
+use App\Exceptions\RoomNotFoundException;
+use App\Exceptions\UserNotFoundException;
 use App\WebSocket\ChatServerHandler;
 use App\WebSocket\Dto\SendMessageDto;
 use Ratchet\ConnectionInterface;
@@ -33,12 +35,12 @@ readonly class SendMessageHandler implements WebSocketStrategyInterface
 
             $room = $this->roomService->getRoom($dto->roomId);
             if (!$room) {
-                return;
+                throw new RoomNotFoundException($dto->roomId);
             }
 
             $user = $this->userRepository->find($dto->userId);
             if (!$user) {
-                return;
+                throw new UserNotFoundException($dto->userId);
             }
 
             $message = $this->messageService->save(

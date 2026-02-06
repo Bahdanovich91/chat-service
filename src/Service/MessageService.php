@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Message;
+use App\Exceptions\RoomNotFoundException;
+use App\Exceptions\UserNotFoundException;
 use App\Repository\MessageRepository;
 use App\Repository\RoomRepository;
 use App\Repository\UserRepository;
@@ -23,12 +25,12 @@ readonly class MessageService
     {
         $room = $this->roomRepository->find($roomId);
         if (!$room) {
-            throw new \Exception("Room not found");
+            throw new RoomNotFoundException($roomId);
         }
 
         $user = $this->userRepository->find($userId);
         if (!$user) {
-            throw new \Exception("User not found");
+            throw new UserNotFoundException($userId);
         }
 
         $message = new Message();

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\WebSocket\Strategy;
+namespace App\WebSocket\MessageStrategy;
 
 use App\Enum\ActionType;
 use App\WebSocket\ChatServerHandler;

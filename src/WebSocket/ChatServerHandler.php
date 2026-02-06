@@ -35,11 +35,12 @@ class ChatServerHandler implements MessageComponentInterface
         foreach ($this->handlers as $handler) {
             if ($handler->isApplicable($data['type'])) {
                 $handler->handle($from, $data, $this);
+
                 return;
             }
         }
 
-        $from->send(json_encode(['type' => 'error', 'message' => 'No handler found']));
+        $from->send(json_encode(['type' => 'error', 'message' => 'Handler not found']));
     }
 
     public function onClose(ConnectionInterface $conn): void
