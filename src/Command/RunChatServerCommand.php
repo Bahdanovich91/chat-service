@@ -33,7 +33,14 @@ class RunChatServerCommand extends Command
     {
         $loop = Loop::get();
         $server = new ChatServerHandler($this->handlers);
-        $secureSocket = new SocketServer('0.0.0.0:8080', [], $loop);
+        $socket = new SocketServer('0.0.0.0:8080', [], $loop);
+
+        $secureSocket = new SecureServer($socket, $loop, [
+            'local_cert' => $this->certPath,
+            'local_pk' => $this->keyPath,
+            'allow_self_signed' => true,
+            'verify_peer' => false,
+        ]);
 
         new IoServer(
             new HttpServer(
