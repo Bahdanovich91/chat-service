@@ -15,8 +15,8 @@ class SendMessageDto implements WebSocketDtoInterface
 
     public static function fromArray(array $data): self
     {
-        if (!isset($data['roomId']) || !isset($data['userId'])) {
-            throw new \Exception('');
+        if (!isset($data['roomId']) || !isset($data['userId']) || !isset($data['message'])) {
+            throw new \InvalidArgumentException('Missing required fields');
         }
 
         return new self(

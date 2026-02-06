@@ -35,13 +35,14 @@ readonly class JoinRoomHandler implements WebSocketStrategyInterface
                 throw new RoomNotFoundException($dto->roomId);
             }
 
-            $history = $this->messageService->getRecentMessages($dto->roomId);
+            $history = $this->messageService->getRecentMessages($dto->roomId, $dto->minutes);
 
             $conn->send(json_encode([
                 'type' => 'room_history',
                 'roomId' => $dto->roomId,
                 'roomName' => $room->getName(),
-                'messages' => $history
+                'messages' => $history,
+                'minutes' => $dto->minutes
             ]));
 
             $server->joinRoom($dto->roomId, $conn, $dto->userId);

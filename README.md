@@ -24,7 +24,8 @@ ws://localhost:8080`
 {
   "type": "join_room",
   "userId": 1,
-  "roomId": 1
+  "roomId": 1,
+  "minutes": 30
 }
 ```
 
