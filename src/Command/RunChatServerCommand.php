@@ -33,14 +33,7 @@ class RunChatServerCommand extends Command
     {
         $loop = Loop::get();
         $server = new ChatServerHandler($this->handlers);
-        $socket = new SocketServer('0.0.0.0:8443', [], $loop);
-
-        $secureSocket = new SecureServer($socket, $loop, [
-            'local_cert' => $this->certPath,
-            'local_pk' => $this->keyPath,
-            'allow_self_signed' => true,
-            'verify_peer' => false,
-        ]);
+        $secureSocket = new SocketServer('0.0.0.0:8080', [], $loop);
 
         new IoServer(
             new HttpServer(
@@ -50,7 +43,7 @@ class RunChatServerCommand extends Command
             $loop
         );
 
-        $output->writeln('wss://localhost:8443');
+        $output->writeln('wss://localhost/ws/');
         $loop->run();
 
         return Command::SUCCESS;

@@ -1,5 +1,4 @@
-###  ws://localhost:8080`
-###  wss://localhost:8443
+###  wss://localhost/ws/
 
 ### сгенерировать сертификат
 ```bash
