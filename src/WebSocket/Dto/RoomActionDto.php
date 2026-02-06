@@ -9,7 +9,8 @@ class RoomActionDto implements WebSocketDtoInterface
     public function __construct(
         public int $roomId,
         public int $userId
-    ) {}
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {
