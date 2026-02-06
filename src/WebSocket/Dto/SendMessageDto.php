@@ -8,12 +8,21 @@ class SendMessageDto implements WebSocketDtoInterface
 {
     public function __construct(
         public int $roomId,
+        public int $userId,
         public string $message
     ) {
     }
 
     public static function fromArray(array $data): self
     {
-        return new self($data['roomId'], $data['message']);
+        if (!isset($data['roomId']) || !isset($data['userId'])) {
+            throw new \Exception('');
+        }
+
+        return new self(
+            (int) $data['roomId'],
+            (int) $data['userId'],
+            $data['message']
+        );
     }
 }

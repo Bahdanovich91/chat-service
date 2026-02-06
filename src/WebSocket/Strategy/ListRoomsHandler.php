@@ -9,8 +9,13 @@ use App\WebSocket\ChatServerHandler;
 use Ratchet\ConnectionInterface;
 use App\Service\RoomService;
 
-class ListRoomsHandler implements WebSocketStrategyInterface
+readonly class ListRoomsHandler implements WebSocketStrategyInterface
 {
+    public function __construct(
+        private RoomService $roomService
+    ) {
+    }
+
     public function isApplicable(string $type): bool
     {
         return ActionType::ListRooms->value === $type;
@@ -18,9 +23,12 @@ class ListRoomsHandler implements WebSocketStrategyInterface
 
     public function handle(ConnectionInterface $conn, array $data, ChatServerHandler $server): void
     {
+        $rooms = $this->roomService->getAllRooms();
+
         $conn->send(json_encode([
-            'type' => 'rooms',
-            'rooms' => array_keys($server->getRooms()),
+            'type' => 'rooms_list',
+            'rooms' => $rooms,
+            'timestamp' => date('c')
         ]));
     }
 }

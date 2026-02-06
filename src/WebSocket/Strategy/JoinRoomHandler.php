@@ -8,10 +8,17 @@ use App\Enum\ActionType;
 use App\WebSocket\ChatServerHandler;
 use App\WebSocket\Dto\RoomActionDto;
 use Ratchet\ConnectionInterface;
+use App\Service\MessageService;
 use App\Service\RoomService;
 
-class JoinRoomHandler implements WebSocketStrategyInterface
+readonly class JoinRoomHandler implements WebSocketStrategyInterface
 {
+    public function __construct(
+        private MessageService $messageService,
+        private RoomService    $roomService
+    ) {
+    }
+
     public function isApplicable(string $type): bool
     {
         return ActionType::JoinRoom->value === $type;
@@ -19,15 +26,35 @@ class JoinRoomHandler implements WebSocketStrategyInterface
 
     public function handle(ConnectionInterface $conn, array $data, ChatServerHandler $server): void
     {
-        $dto = RoomActionDto::fromArray($data);
-//        if (!$roomId) {
-//            return;
-//        }
+        try {
+            $dto = RoomActionDto::fromArray($data);
 
-        $server->joinRoom($dto->roomId, $conn);
-        $server->broadcast($dto->roomId, [
-            'type' => 'user_joined',
-            'roomId' => $dto->roomId,
-        ]);
+            $room = $this->roomService->getRoom($dto->roomId);
+            if (!$room) {
+                return;
+            }
+
+            $history = $this->messageService->getRecentMessages($dto->roomId);
+
+            $conn->send(json_encode([
+                'type' => 'room_history',
+                'roomId' => $dto->roomId,
+                'roomName' => $room->getName(),
+                'messages' => $history
+            ]));
+
+            $server->joinRoom($dto->roomId, $conn, $dto->userId);
+            $server->broadcast($dto->roomId, [
+                'type' => 'user_joined',
+                'roomId' => $dto->roomId,
+                'userId' => $dto->userId,
+                'timestamp' => date('c')
+            ]);
+        } catch (\Exception $e) {
+            $conn->send(json_encode([
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ]));
+        }
     }
 }

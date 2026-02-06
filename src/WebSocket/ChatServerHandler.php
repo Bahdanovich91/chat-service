@@ -7,7 +7,6 @@ namespace App\WebSocket;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use SplObjectStorage;
-use App\WebSocket\Strategy\WebSocketStrategyInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
 class ChatServerHandler implements MessageComponentInterface
@@ -15,8 +14,6 @@ class ChatServerHandler implements MessageComponentInterface
     private SplObjectStorage $clients;
     private iterable $handlers;
     private array $rooms = [];
-    private array $messageHistory = [];
-    private array $roomNames = [];
 
     public function __construct(
         #[TaggedIterator('app.handlers')]
@@ -47,8 +44,19 @@ class ChatServerHandler implements MessageComponentInterface
 
     public function onClose(ConnectionInterface $conn): void
     {
-        foreach ($this->rooms as $room) {
-            $room->detach($conn);
+        $meta = $this->clients[$conn];
+        $userId = $meta['userId'];
+
+        foreach ($meta['rooms'] as $roomId) {
+            $this->rooms[$roomId]?->detach($conn);
+
+            if (isset($this->rooms[$roomId])) {
+                $this->broadcast($roomId, [
+                    'type' => 'user_left',
+                    'roomId' => $roomId,
+                    'userId' => $userId,
+                ]);
+            }
         }
 
         $this->clients->detach($conn);
@@ -60,11 +68,13 @@ class ChatServerHandler implements MessageComponentInterface
         $conn->close();
     }
 
-    public function joinRoom(int $roomId, ConnectionInterface $conn): void
+    public function joinRoom(int $roomId, ConnectionInterface $conn, int $userId): void
     {
         $this->rooms[$roomId] ??= new SplObjectStorage();
         $this->rooms[$roomId]->attach($conn);
+
         $meta = $this->clients[$conn];
+        $meta['userId'] = $userId;
         $meta['rooms'][] = $roomId;
         $this->clients[$conn] = $meta;
     }
@@ -72,6 +82,7 @@ class ChatServerHandler implements MessageComponentInterface
     public function leaveRoom(int $roomId, ConnectionInterface $conn): void
     {
         $this->rooms[$roomId]?->detach($conn);
+
         $meta = $this->clients[$conn];
         $meta['rooms'] = array_filter($meta['rooms'], fn($r) => $r !== $roomId);
         $this->clients[$conn] = $meta;
@@ -86,10 +97,5 @@ class ChatServerHandler implements MessageComponentInterface
         foreach ($this->rooms[$roomId] as $client) {
             $client->send(json_encode($payload));
         }
-    }
-
-    public function getRooms(): array
-    {
-        return $this->rooms;
     }
 }

@@ -9,9 +9,18 @@ use App\WebSocket\ChatServerHandler;
 use App\WebSocket\Dto\SendMessageDto;
 use Ratchet\ConnectionInterface;
 use App\Service\MessageService;
+use App\Service\RoomService;
+use App\Repository\UserRepository;
 
-class SendMessageHandler implements WebSocketStrategyInterface
+readonly class SendMessageHandler implements WebSocketStrategyInterface
 {
+    public function __construct(
+        private MessageService $messageService,
+        private RoomService    $roomService,
+        private UserRepository $userRepository
+    ) {
+    }
+
     public function isApplicable(string $type): bool
     {
         return ActionType::SendMessage->value === $type;
@@ -19,15 +28,39 @@ class SendMessageHandler implements WebSocketStrategyInterface
 
     public function handle(ConnectionInterface $conn, array $data, ChatServerHandler $server): void
     {
-        $dto = SendMessageDto::fromArray($data);
-//        if (!$roomId || !$message) {
-//            return;
-//        }
+        try {
+            $dto = SendMessageDto::fromArray($data);
 
-        $server->broadcast($dto->roomId, [
-            'type' => 'new_message',
-            'roomId' => $dto->roomId,
-            'message' => $dto->message,
-        ]);
+            $room = $this->roomService->getRoom($dto->roomId);
+            if (!$room) {
+                return;
+            }
+
+            $user = $this->userRepository->find($dto->userId);
+            if (!$user) {
+                return;
+            }
+
+            $message = $this->messageService->save(
+                $dto->roomId,
+                $dto->userId,
+                $dto->message
+            );
+
+            $server->broadcast($dto->roomId, [
+                'type' => 'new_message',
+                'roomId' => $dto->roomId,
+                'messageId' => $message->getId(),
+                'content' => $dto->message,
+                'senderId' => $dto->userId,
+                'senderName' => $user->getName(),
+                'timestamp' => $message->getCreatedAt()->format('c')
+            ]);
+        } catch (\Exception $e) {
+            $conn->send(json_encode([
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ]));
+        }
     }
 }
