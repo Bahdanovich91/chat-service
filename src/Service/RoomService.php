@@ -6,13 +6,11 @@ namespace App\Service;
 
 use App\Entity\Room;
 use App\Repository\RoomRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 readonly class RoomService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private RoomRepository         $roomRepository
+        private RoomRepository $roomRepository
     ) {}
 
     public function getRoom(int $roomId): ?Room
@@ -31,16 +29,5 @@ readonly class RoomService
                 'messageCount' => $room->getMessages()->count()
             ];
         }, $rooms);
-    }
-
-    public function createRoom(string $name): Room
-    {
-        $room = new Room();
-        $room->setName($name);
-
-        $this->entityManager->persist($room);
-        $this->entityManager->flush();
-
-        return $room;
     }
 }

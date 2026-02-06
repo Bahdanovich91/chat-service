@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\WebSocket\Strategy;
+namespace App\WebSocket\MessageStrategy;
 
 use App\Enum\ActionType;
+use App\Exceptions\RoomNotFoundException;
 use App\WebSocket\ChatServerHandler;
 use App\WebSocket\Dto\RoomActionDto;
 use Ratchet\ConnectionInterface;
@@ -31,16 +32,17 @@ readonly class JoinRoomHandler implements WebSocketStrategyInterface
 
             $room = $this->roomService->getRoom($dto->roomId);
             if (!$room) {
-                return;
+                throw new RoomNotFoundException($dto->roomId);
             }
 
-            $history = $this->messageService->getRecentMessages($dto->roomId);
+            $history = $this->messageService->getRecentMessages($dto->roomId, $dto->minutes);
 
             $conn->send(json_encode([
                 'type' => 'room_history',
                 'roomId' => $dto->roomId,
                 'roomName' => $room->getName(),
-                'messages' => $history
+                'messages' => $history,
+                'minutes' => $dto->minutes
             ]));
 
             $server->joinRoom($dto->roomId, $conn, $dto->userId);

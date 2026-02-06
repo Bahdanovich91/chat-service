@@ -1,4 +1,4 @@
-** ** `ws://localhost:8080`
+ws://localhost:8080`
 
 ### список комнат
 ```json
@@ -24,7 +24,8 @@
 {
   "type": "join_room",
   "userId": 1,
-  "roomId": 1
+  "roomId": 1,
+  "minutes": 30
 }
 ```
 
@@ -64,7 +65,7 @@
 }
 ```
 
-### ВОтправить сообщение
+### Отправить сообщение
 ```json
 {
   "type": "send_message",
