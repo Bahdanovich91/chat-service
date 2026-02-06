@@ -24,6 +24,7 @@ services:
     container_name: chat_service_app
     ports:
       - "8080:8080"
+      - "8443:8443"
     volumes:
       - .:/var/www/html
     environment:

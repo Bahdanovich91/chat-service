@@ -1,4 +1,10 @@
-ws://localhost:8080`
+###  ws://localhost:8080`
+###  wss://localhost:8443
+
+### сгенерировать сертификат
+```bash
+mkdir -p config/ssl openssl req -x509 -newkey rsa:4096 -keyout config/ssl/key.pem -out config/ssl/cert.pem -days 365 -nodes
+```
 
 ### список комнат
 ```json
