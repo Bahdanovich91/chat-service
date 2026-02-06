@@ -22,7 +22,8 @@ services:
   app:
     build: .
     container_name: chat_service_app
-    working_dir: /var/www/html
+    ports:
+      - "8080:8080"
     volumes:
       - .:/var/www/html
     environment:
