@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\WebSocket\MessageStrategy;
 
 use App\Enum\ActionType;
+use App\Service\RoomService;
 use App\WebSocket\ChatServerHandler;
 use Ratchet\ConnectionInterface;
-use App\Service\RoomService;
 
 readonly class ListRoomsHandler implements WebSocketStrategyInterface
 {

@@ -11,11 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class MessageCrudController extends AbstractCrudController
 {
-    public static function getEntityFqcn(): string
-    {
-        return Message::class;
-    }
-
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -25,5 +20,10 @@ class MessageCrudController extends AbstractCrudController
             AssociationField::new('room'),
             DateTimeField::new('createdAt')->hideOnForm(),
         ];
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Message::class;
     }
 }

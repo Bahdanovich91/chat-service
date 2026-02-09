@@ -7,12 +7,12 @@ namespace App\WebSocket\MessageStrategy;
 use App\Enum\ActionType;
 use App\Exceptions\RoomNotFoundException;
 use App\Exceptions\UserNotFoundException;
+use App\Repository\UserRepository;
+use App\Service\MessageService;
+use App\Service\RoomService;
 use App\WebSocket\ChatServerHandler;
 use App\WebSocket\Dto\SendMessageDto;
 use Ratchet\ConnectionInterface;
-use App\Service\MessageService;
-use App\Service\RoomService;
-use App\Repository\UserRepository;
 
 readonly class SendMessageHandler implements WebSocketStrategyInterface
 {

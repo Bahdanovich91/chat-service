@@ -9,16 +9,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class RoomCrudController extends AbstractCrudController
 {
-    public static function getEntityFqcn(): string
-    {
-        return Room::class;
-    }
-
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
         ];
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Room::class;
     }
 }

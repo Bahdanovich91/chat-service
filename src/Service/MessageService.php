@@ -19,7 +19,8 @@ readonly class MessageService
         private MessageRepository      $messageRepository,
         private RoomRepository         $roomRepository,
         private UserRepository         $userRepository,
-    ) {}
+    ) {
+    }
 
     public function save(int $roomId, int $userId, string $content): Message
     {
