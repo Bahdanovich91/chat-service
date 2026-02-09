@@ -85,3 +85,9 @@ ws://localhost:8080`
   "senderName": "User 1"
 }
 ```
+
+## Запуск phpstan
+
+```bash
+vendor/bin/phpstan analyse --configuration=phpstan.neon
+```
