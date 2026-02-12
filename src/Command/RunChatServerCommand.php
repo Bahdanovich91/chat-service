@@ -19,7 +19,7 @@ class RunChatServerCommand extends Command
 
     public function __construct(
         #[TaggedIterator('app.handlers')]
-        private iterable $handlers,
+        private readonly iterable $handlers,
     ) {
         parent::__construct();
     }
@@ -35,7 +35,9 @@ class RunChatServerCommand extends Command
             8080
         );
 
-        $output->writeln('port 8080');
+        $output->writeln('WebSocket server: wss://localhost:8083/ws');
+        $output->writeln('Admin panel: https://localhost:8083/admin');
+
         $ratchet->run();
 
         return Command::SUCCESS;
