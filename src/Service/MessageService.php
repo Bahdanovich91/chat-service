@@ -49,16 +49,16 @@ readonly class MessageService
     public function getRecentMessages(int $roomId, ?int $minutes = 15): array
     {
         $dateLimit = new \DateTimeImmutable("-$minutes minutes");
-        $messages = $this->messageRepository->findByRoomAndDate($roomId, $dateLimit);
+        $messages  = $this->messageRepository->findByRoomAndDate($roomId, $dateLimit);
 
         return array_map(function (Message $message) {
             return [
-                'id' => $message->getId(),
-                'content' => $message->getContent(),
-                'senderId' => $message->getSender()->getId(),
+                'id'         => $message->getId(),
+                'content'    => $message->getContent(),
+                'senderId'   => $message->getSender()->getId(),
                 'senderName' => $message->getSender()->getName(),
-                'roomId' => $message->getRoom()->getId(),
-                'createdAt' => $message->getCreatedAt()->format('c')
+                'roomId'     => $message->getRoom()->getId(),
+                'createdAt'  => $message->getCreatedAt()->format('c')
             ];
         }, $messages);
     }

@@ -25,8 +25,8 @@ readonly class RoomService
 
         return array_map(function (Room $room) {
             return [
-                'id' => $room->getId(),
-                'name' => $room->getName(),
+                'id'           => $room->getId(),
+                'name'         => $room->getName(),
                 'messageCount' => $room->getMessages()->count()
             ];
         }, $rooms);

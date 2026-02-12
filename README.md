@@ -11,7 +11,7 @@ ws://localhost:8080`
 **Ответ:**
 ```json
 {
-  "type": "rooms_list",
+  "type": "list_rooms",
   "rooms": [
     {"id": 1, "name": "test"},
     {"id": 2, "name": "test1"}
@@ -59,7 +59,7 @@ ws://localhost:8080`
 **участникам комнаты прийдет:**
 ```json
 {
-  "type": "user_left",
+  "type": "leave_room",
   "roomId": 1,
   "userId": 1
 }
@@ -78,7 +78,7 @@ ws://localhost:8080`
 **участникам комнаты прийдет:**
 ```json
 {
-  "type": "new_message",
+  "type": "send_message",
   "roomId": 1,
   "content": "Test!",
   "senderId": 1,

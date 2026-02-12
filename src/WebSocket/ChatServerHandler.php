@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\WebSocket;
 
+use App\Enum\ActionType;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 use SplObjectStorage;
@@ -22,7 +23,7 @@ class ChatServerHandler implements MessageComponentInterface
         iterable $handlers
     ) {
         $this->handlers = $handlers;
-        $this->clients = new SplObjectStorage();
+        $this->clients  = new SplObjectStorage();
     }
 
     public function onOpen(ConnectionInterface $conn): void
@@ -42,12 +43,15 @@ class ChatServerHandler implements MessageComponentInterface
             }
         }
 
-        $from->send(json_encode(['type' => 'error', 'message' => 'Handler not found']));
+        $from->send(json_encode([
+            'type'    => ActionType::Error->value,
+            'message' => 'Handler not found'
+        ]));
     }
 
     public function onClose(ConnectionInterface $conn): void
     {
-        $meta = $this->clients[$conn];
+        $meta   = $this->clients[$conn];
         $userId = $meta['userId'];
 
         foreach ($meta['rooms'] as $roomId) {
@@ -55,7 +59,7 @@ class ChatServerHandler implements MessageComponentInterface
 
             if (isset($this->rooms[$roomId])) {
                 $this->broadcast($roomId, [
-                    'type' => 'user_left',
+                    'type'   => ActionType::LeaveRoom->value,
                     'roomId' => $roomId,
                     'userId' => $userId,
                 ]);
@@ -67,7 +71,10 @@ class ChatServerHandler implements MessageComponentInterface
 
     public function onError(ConnectionInterface $conn, \Throwable $e): void
     {
-        $conn->send(json_encode(['type' => 'error', 'message' => $e->getMessage()]));
+        $conn->send(json_encode([
+            'type'    => ActionType::Error->value,
+            'message' => $e->getMessage()
+        ]));
         $conn->close();
     }
 
@@ -76,9 +83,9 @@ class ChatServerHandler implements MessageComponentInterface
         $this->rooms[$roomId] ??= new SplObjectStorage();
         $this->rooms[$roomId]->attach($conn);
 
-        $meta = $this->clients[$conn];
-        $meta['userId'] = $userId;
-        $meta['rooms'][] = $roomId;
+        $meta                 = $this->clients[$conn];
+        $meta['userId']       = $userId;
+        $meta['rooms'][]      = $roomId;
         $this->clients[$conn] = $meta;
     }
 
@@ -86,8 +93,8 @@ class ChatServerHandler implements MessageComponentInterface
     {
         $this->rooms[$roomId]?->detach($conn);
 
-        $meta = $this->clients[$conn];
-        $meta['rooms'] = array_filter($meta['rooms'], fn($r) => $r !== $roomId);
+        $meta                 = $this->clients[$conn];
+        $meta['rooms']        = array_filter($meta['rooms'], fn($r) => $r !== $roomId);
         $this->clients[$conn] = $meta;
     }
 
