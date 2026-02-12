@@ -19,7 +19,7 @@ jobs:
                   tools: composer:v2
 
             - name: Install dependencies
-              run: composer install --no-interaction --no-progress --prefer-dist
+              run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
             - name: Run PHP-CS-Fixer
               run: vendor/bin/php-cs-fixer fix --dry-run --diff
