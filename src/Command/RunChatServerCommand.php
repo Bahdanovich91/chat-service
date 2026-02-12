@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\WebSocket\ChatServerHandler;
-use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
+use Ratchet\Server\IoServer;
 use Ratchet\WebSocket\WsServer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

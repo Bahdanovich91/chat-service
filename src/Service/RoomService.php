@@ -11,7 +11,8 @@ readonly class RoomService
 {
     public function __construct(
         private RoomRepository $roomRepository
-    ) {}
+    ) {
+    }
 
     public function getRoom(int $roomId): ?Room
     {

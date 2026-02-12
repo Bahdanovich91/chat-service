@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\WebSocket;
 
-use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use Ratchet\MessageComponentInterface;
 use SplObjectStorage;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
 class ChatServerHandler implements MessageComponentInterface
 {
     private SplObjectStorage $clients;
+
     private iterable $handlers;
+
     private array $rooms = [];
 
     public function __construct(
