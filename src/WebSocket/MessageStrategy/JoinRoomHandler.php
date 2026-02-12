@@ -38,23 +38,23 @@ readonly class JoinRoomHandler implements WebSocketStrategyInterface
             $history = $this->messageService->getRecentMessages($dto->roomId, $dto->minutes);
 
             $conn->send(json_encode([
-                'type' => 'room_history',
-                'roomId' => $dto->roomId,
+                'type'     => 'room_history',
+                'roomId'   => $dto->roomId,
                 'roomName' => $room->getName(),
                 'messages' => $history,
-                'minutes' => $dto->minutes
+                'minutes'  => $dto->minutes
             ]));
 
             $server->joinRoom($dto->roomId, $conn, $dto->userId);
             $server->broadcast($dto->roomId, [
-                'type' => 'user_joined',
-                'roomId' => $dto->roomId,
-                'userId' => $dto->userId,
+                'type'      => 'user_joined',
+                'roomId'    => $dto->roomId,
+                'userId'    => $dto->userId,
                 'timestamp' => date('c')
             ]);
         } catch (\Exception $e) {
             $conn->send(json_encode([
-                'type' => 'error',
+                'type'    => 'error',
                 'message' => $e->getMessage()
             ]));
         }

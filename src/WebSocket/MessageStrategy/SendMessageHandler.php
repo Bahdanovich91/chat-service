@@ -50,17 +50,17 @@ readonly class SendMessageHandler implements WebSocketStrategyInterface
             );
 
             $server->broadcast($dto->roomId, [
-                'type' => 'new_message',
-                'roomId' => $dto->roomId,
-                'messageId' => $message->getId(),
-                'content' => $dto->message,
-                'senderId' => $dto->userId,
+                'type'       => 'new_message',
+                'roomId'     => $dto->roomId,
+                'messageId'  => $message->getId(),
+                'content'    => $dto->message,
+                'senderId'   => $dto->userId,
                 'senderName' => $user->getName(),
-                'timestamp' => $message->getCreatedAt()->format('c')
+                'timestamp'  => $message->getCreatedAt()->format('c')
             ]);
         } catch (\Exception $e) {
             $conn->send(json_encode([
-                'type' => 'error',
+                'type'    => 'error',
                 'message' => $e->getMessage()
             ]));
         }

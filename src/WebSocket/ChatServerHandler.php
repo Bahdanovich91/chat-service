@@ -22,7 +22,7 @@ class ChatServerHandler implements MessageComponentInterface
         iterable $handlers
     ) {
         $this->handlers = $handlers;
-        $this->clients = new SplObjectStorage();
+        $this->clients  = new SplObjectStorage();
     }
 
     public function onOpen(ConnectionInterface $conn): void
@@ -47,7 +47,7 @@ class ChatServerHandler implements MessageComponentInterface
 
     public function onClose(ConnectionInterface $conn): void
     {
-        $meta = $this->clients[$conn];
+        $meta   = $this->clients[$conn];
         $userId = $meta['userId'];
 
         foreach ($meta['rooms'] as $roomId) {
@@ -55,7 +55,7 @@ class ChatServerHandler implements MessageComponentInterface
 
             if (isset($this->rooms[$roomId])) {
                 $this->broadcast($roomId, [
-                    'type' => 'user_left',
+                    'type'   => 'user_left',
                     'roomId' => $roomId,
                     'userId' => $userId,
                 ]);
@@ -76,9 +76,9 @@ class ChatServerHandler implements MessageComponentInterface
         $this->rooms[$roomId] ??= new SplObjectStorage();
         $this->rooms[$roomId]->attach($conn);
 
-        $meta = $this->clients[$conn];
-        $meta['userId'] = $userId;
-        $meta['rooms'][] = $roomId;
+        $meta                 = $this->clients[$conn];
+        $meta['userId']       = $userId;
+        $meta['rooms'][]      = $roomId;
         $this->clients[$conn] = $meta;
     }
 
@@ -86,8 +86,8 @@ class ChatServerHandler implements MessageComponentInterface
     {
         $this->rooms[$roomId]?->detach($conn);
 
-        $meta = $this->clients[$conn];
-        $meta['rooms'] = array_filter($meta['rooms'], fn($r) => $r !== $roomId);
+        $meta                 = $this->clients[$conn];
+        $meta['rooms']        = array_filter($meta['rooms'], fn($r) => $r !== $roomId);
         $this->clients[$conn] = $meta;
     }
 
