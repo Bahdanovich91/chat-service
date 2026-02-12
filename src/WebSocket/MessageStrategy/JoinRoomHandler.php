@@ -47,14 +47,14 @@ readonly class JoinRoomHandler implements WebSocketStrategyInterface
 
             $server->joinRoom($dto->roomId, $conn, $dto->userId);
             $server->broadcast($dto->roomId, [
-                'type'      => 'user_joined',
+                'type'      => ActionType::JoinRoom->value,
                 'roomId'    => $dto->roomId,
                 'userId'    => $dto->userId,
                 'timestamp' => date('c')
             ]);
         } catch (\Exception $e) {
             $conn->send(json_encode([
-                'type'    => 'error',
+                'type'    => ActionType::Error->value,
                 'message' => $e->getMessage()
             ]));
         }

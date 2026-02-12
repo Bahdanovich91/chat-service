@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\WebSocket;
 
+use App\Enum\ActionType;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 use SplObjectStorage;
@@ -42,7 +43,10 @@ class ChatServerHandler implements MessageComponentInterface
             }
         }
 
-        $from->send(json_encode(['type' => 'error', 'message' => 'Handler not found']));
+        $from->send(json_encode([
+            'type'    => ActionType::Error->value,
+            'message' => 'Handler not found'
+        ]));
     }
 
     public function onClose(ConnectionInterface $conn): void
@@ -55,7 +59,7 @@ class ChatServerHandler implements MessageComponentInterface
 
             if (isset($this->rooms[$roomId])) {
                 $this->broadcast($roomId, [
-                    'type'   => 'user_left',
+                    'type'   => ActionType::LeaveRoom->value,
                     'roomId' => $roomId,
                     'userId' => $userId,
                 ]);
@@ -67,7 +71,10 @@ class ChatServerHandler implements MessageComponentInterface
 
     public function onError(ConnectionInterface $conn, \Throwable $e): void
     {
-        $conn->send(json_encode(['type' => 'error', 'message' => $e->getMessage()]));
+        $conn->send(json_encode([
+            'type'    => ActionType::Error->value,
+            'message' => $e->getMessage()
+        ]));
         $conn->close();
     }
 

@@ -26,7 +26,7 @@ readonly class ListRoomsHandler implements WebSocketStrategyInterface
         $rooms = $this->roomService->getAllRooms();
 
         $conn->send(json_encode([
-            'type'      => 'rooms_list',
+            'type'      => ActionType::ListRooms->value,
             'rooms'     => $rooms,
             'timestamp' => date('c')
         ]));

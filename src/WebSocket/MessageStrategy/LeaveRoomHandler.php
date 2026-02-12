@@ -35,14 +35,14 @@ readonly class LeaveRoomHandler implements WebSocketStrategyInterface
 
             $server->leaveRoom($dto->roomId, $conn);
             $server->broadcast($dto->roomId, [
-                'type'      => 'user_left',
+                'type'      => ActionType::LeaveRoom->value,
                 'roomId'    => $dto->roomId,
                 'userId'    => $dto->userId,
                 'timestamp' => date('c')
             ]);
         } catch (\Exception $e) {
             $conn->send(json_encode([
-                'type'    => 'error',
+                'type'    => ActionType::Error->value,
                 'message' => $e->getMessage()
             ]));
         }

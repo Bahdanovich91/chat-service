@@ -10,4 +10,5 @@ enum ActionType: string
     case LeaveRoom   = 'leave_room';
     case SendMessage = 'send_message';
     case ListRooms   = 'list_rooms';
+    case Error       = 'error';
 }

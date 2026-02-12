@@ -50,7 +50,7 @@ readonly class SendMessageHandler implements WebSocketStrategyInterface
             );
 
             $server->broadcast($dto->roomId, [
-                'type'       => 'new_message',
+                'type'       => ActionType::SendMessage->value,
                 'roomId'     => $dto->roomId,
                 'messageId'  => $message->getId(),
                 'content'    => $dto->message,
@@ -60,7 +60,7 @@ readonly class SendMessageHandler implements WebSocketStrategyInterface
             ]);
         } catch (\Exception $e) {
             $conn->send(json_encode([
-                'type'    => 'error',
+                'type'    => ActionType::Error->value,
                 'message' => $e->getMessage()
             ]));
         }
