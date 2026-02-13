@@ -31,4 +31,4 @@ jobs:
               run: composer audit
 
             - name: Run PHPUnit tests
-              run: vendor/bin/phpunit --configuration=phpunit.xml.dist --no-interaction --coverage-text
+              run: vendor/bin/phpunit --configuration=phpunit.xml.dist --coverage-text
