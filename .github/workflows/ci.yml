@@ -29,3 +29,6 @@ jobs:
 
             - name: Security check
               run: composer audit
+
+            - name: Run PHPUnit tests
+              run: vendor/bin/phpunit --configuration=phpunit.xml.dist --no-interaction --coverage-text
