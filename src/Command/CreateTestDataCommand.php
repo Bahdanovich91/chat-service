@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Room;
-use App\Entity\User;
+use App\DataFixtures\RoomFixture;
+use App\DataFixtures\UserFixture;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,20 +26,16 @@ class CreateTestDataCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        for ($i = 1; $i <= 5; $i++) {
-            $user = new User();
-            $user->setName("User $i");
-            $this->entityManager->persist($user);
-        }
+        $loader = new Loader();
+        $loader->addFixture(new UserFixture());
+        $loader->addFixture(new RoomFixture());
 
-        $roomNames = ['test1', 'test2', 'test3', 'test4', 'test5'];
-        foreach ($roomNames as $name) {
-            $room = new Room();
-            $room->setName($name);
-            $this->entityManager->persist($room);
-        }
+        $purger   = new ORMPurger($this->entityManager);
+        $executor = new ORMExecutor($this->entityManager, $purger);
 
-        $this->entityManager->flush();
+        $executor->execute($loader->getFixtures(), true);
+
+        $output->writeln('Created successfully!');
 
         return Command::SUCCESS;
     }

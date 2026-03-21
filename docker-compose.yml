@@ -16,6 +16,8 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 5
+      interval: 1s
+      start_period: 0s
     networks:
       - chat_service_network
 
@@ -26,7 +28,6 @@ services:
       - "8080:8080"
     volumes:
       - .:/var/www/html
-      - ./docker/ssl:/etc/ssl/certs:ro
     environment:
       DATABASE_URL: "mysql://chat_service_user:chat_service_password@mysql:3306/chat_service_db?serverVersion=8.0"
       APP_ENV: prod
